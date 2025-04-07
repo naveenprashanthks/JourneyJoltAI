@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JourneyJolt - AI Travel Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://kit.fontawesome.com/a3b5d8d2ce.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f2f5;
+      color: var(--dark);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Background Tourist Cards */
+    .background-cards {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      padding: 20px;
+      pointer-events: none;
+    }
+
+    .tourist-card {
+      background-size: cover;
+      background-position: center;
+      height: 120px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      opacity: 0.7;
+      filter: brightness(0.8);
+    }
+
+    .tourist-card:hover {
+      transform: scale(1.8) !important;
+      z-index: 10;
+      opacity: 1;
+      filter: brightness(1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .hero-content {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 0;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(5px);
+      position: relative;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: var(--dark);
+    }
+
+    .section-title span {
+      color: var(--accent);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      background: rgba(67, 97, 238, 0.1);
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: var(--dark);
+    }
+
+    .feature-card p {
+      color: var(--gray);
+      text-align: center;
+    }
+
+    /* CTA Button */
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, var(--accent), #e5177e);
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
+      text-decoration: none;
+      margin-top: 1.5rem;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(247, 37, 133, 0.5);
+    }
+
+    /* Demo Section */
+    .demo {
+      padding: 5rem 0;
+      text-align: center;
+    }
+
+    .demo-container {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 20px;
+      padding: 3rem;
+      color: white;
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      animation: rotate 20s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .demo-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .demo h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .demo p {
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .background-cards {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+      
+      .tourist-card {
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Tourist Cards -->
+  <div class="background-cards" id="backgroundCards"></div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content" data-aos="fade-up">
+        <h1>JourneyJolt AI</h1>
+        <p>Your intelligent travel planning assistant that crafts perfect itineraries in seconds</p>
+        <a href="login.html" class="cta-button">
+          <i class="fas fa-magic"></i> Start Planning Now
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">AI <span>Features</span></h2>
+      <div class="features-grid">
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3>Adaptive Learning</h3>
+          <p>Our AI learns your preferences to continuously improve recommendations and personalize your travel experience.</p>
+        </div>
+        
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <h3>Smart Scheduling</h3>
+          <p>Optimized itineraries that maximize your time at destinations while minimizing unnecessary travel.</p>
+        </div>
+        
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-icon">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <h3>Local Insights</h3>
+          <p>Discover hidden gems and authentic experiences beyond typical tourist attractions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Section -->
+  <section class="demo">
+    <div class="container">
+      <div class="demo-container" data-aos="fade-up">
+        <div class="demo-content">
+          <h3>See JourneyJolt in Action</h3>
+          <p>Watch how our AI transforms your travel preferences into a perfect itinerary in seconds</p>
+          <a href="login.html" class="cta-button">
+            <i class="fas fa-rocket"></i> Try It Yourself
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 120
+    });
+
+    // Tourist spots data with image URLs
+    const touristSpots = [
+      { name: "Eiffel Tower", image: "https://images.unsplash.com/photo-1431274172761-fca41d930114?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Great Wall", image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Taj Mahal", image: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Machu Picchu", image: "https://images.unsplash.com/photo-1526397751294-331021109fbd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Colosseum", image: "https://images.unsplash.com/photo-1585506942812-e72b29cef752?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Christ Redeemer", image: "https://images.unsplash.com/photo-1518391846015-55a9cc003b25?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Pyramids", image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Santorini", image: "https://images.unsplash.com/photo-1509266272358-7701da638078?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Northern Lights", image: "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Grand Canyon", image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Sydney Opera", image: "https://images.unsplash.com/photo-1524820197278-540916411e20?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Petra", image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Venice", image: "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Bali", image: "https://images.unsplash.com/photo-1518544864410-7ef3e7d0463e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "New York", image: "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Tokyo", image: "https://images.unsplash.com/photo-1492571350019-22de08371fd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Dubai", image: "https://images.unsplash.com/photo-1518684079-3c830dcef090?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Paris", image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "London", image: "https://images.unsplash.com/photo-1486299267070-83823f5448dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" },
+      { name: "Rome", image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" }
+    ];
+
+    // Create background tourist cards
+    function createBackgroundCards() {
+      const container = document.getElementById('backgroundCards');
+      
+      // Duplicate the array to have more cards
+      const spots = [...touristSpots, ...touristSpots, ...touristSpots];
+      
+      spots.forEach(spot => {
+        const card = document.createElement('div');
+        card.className = 'tourist-card';
+        card.style.backgroundImage = `url(${spot.image})`;
+        card.title = spot.name;
+        
+        // Random positioning
+        card.style.gridColumn = Math.floor(Math.random() * 10) + 1;
+        card.style.gridRow = Math.floor(Math.random() * 10) + 1;
+        
+        // Random rotation
+        card.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Initialize on load
+    window.addEventListener('load', () => {
+      createBackgroundCards();
+    });
+  </script>
+</body>
+</html>

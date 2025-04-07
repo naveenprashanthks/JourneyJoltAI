@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JourneyJolt - Plan Your Trip</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #ffffff);
+      padding: 30px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1a73e8;
+      margin-bottom: 30px;
+    }
+
+    form label {
+      display: block;
+      margin: 15px 0 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1a73e8;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #155fc1;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .loading span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin: 3px;
+      background-color: #1a73e8;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite ease-in-out both;
+    }
+
+    .loading span:nth-child(2) {
+      animation-delay: -1.1s;
+    }
+
+    .loading span:nth-child(3) {
+      animation-delay: -1.0s;
+    }
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+      } 40% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📍 Plan Your Trip with JourneyJolt</h1>
+    <form id="tripForm">
+      <label for="destination">Destination</label>
+      <input type="text" id="destination" name="destination" required placeholder="e.g., Paris, Tokyo">
+
+      <label for="startDate">Start Date</label>
+      <input type="date" id="startDate" name="startDate" required>
+
+      <label for="endDate">End Date</label>
+      <input type="date" id="endDate" name="endDate" required>
+
+      <label for="interests">Your Interests</label>
+      <input type="text" id="interests" name="interests" placeholder="e.g., museums, food, beaches">
+
+      <label for="budget">Budget</label>
+      <select id="budget" name="budget">
+        <option value="low">Low</option>
+        <option value="medium" selected>Medium</option>
+        <option value="high">High</option>
+      </select>
+
+      <button type="submit">✈️ Generate My Itinerary</button>
+    </form>
+
+    <div class="loading" id="loading">
+      <p>Generating your personalized trip...</p>
+      <div>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('tripForm');
+    const loading = document.getElementById('loading');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loading.style.display = 'block';
+
+      const destination = document.getElementById('destination').value;
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const interests = document.getElementById('interests').value;
+      const budget = document.getElementById('budget').value;
+
+      const prompt = `Generate a detailed travel itinerary for a trip to ${destination} from ${startDate} to ${endDate} with a ${budget} budget. Include places related to: ${interests}. Provide a day-by-day plan with activities, food recommendations, and travel tips and provide the weather condition of ${destination} on ${startDate}.`;
+
+      try {
+        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=AIzaSyCU5NfQP-aWC4M0IjY13dStMUuqnsLYJQQ', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }]
+          })
+        });
+
+        const data = await response.json();
+        const result = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, no itinerary found.";
+
+        localStorage.setItem('journeyJoltResult', result);
+        window.location.href = 'results.html';
+      } catch (err) {
+        alert("Something went wrong while generating itinerary.");
+        console.error(err);
+        loading.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
